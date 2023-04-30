@@ -4,9 +4,19 @@
  */
 package org.views;
 
+import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
+import java.io.File;
+import javax.swing.filechooser.FileNameExtensionFilter;
+import java.nio.file.Files;
+import javax.swing.ImageIcon;
 import org.models.Category;
-import org.models.Image;
+import org.models.ImageM;
+import java.awt.Image;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.UUID;
+import javax.swing.DefaultComboBoxModel;
 import org.tmemory.Db;
 
 /**
@@ -24,6 +34,8 @@ public class LibraryView extends javax.swing.JFrame {
         initComponents();
         this.setLocationRelativeTo(null);
         hydrateCategoryComboBox();
+        hydrateImageComboBox();
+        currentUserLabel.setText(db.getUserSession().getUsername());
     }
 
     /**
@@ -38,19 +50,20 @@ public class LibraryView extends javax.swing.JFrame {
         imageComboBox = new javax.swing.JComboBox<>();
         jLabel1 = new javax.swing.JLabel();
         jPanel1 = new javax.swing.JPanel();
-        jButton1 = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
+        imageLabel = new javax.swing.JLabel();
+        nextImageRightButton = new javax.swing.JButton();
+        nextImageLeftButton = new javax.swing.JButton();
         addCategoryButton = new javax.swing.JButton();
         removeCategoryButton = new javax.swing.JButton();
-        jButton5 = new javax.swing.JButton();
-        jButton6 = new javax.swing.JButton();
+        addImageButton = new javax.swing.JButton();
+        deleteImageButton = new javax.swing.JButton();
         jLabel2 = new javax.swing.JLabel();
         goBackToMenuButton = new javax.swing.JButton();
         jLabel3 = new javax.swing.JLabel();
         categoryComboBox = new javax.swing.JComboBox<>();
         jLabel4 = new javax.swing.JLabel();
-        jLabel5 = new javax.swing.JLabel();
-        jLabel6 = new javax.swing.JLabel();
+        imageCountLabel = new javax.swing.JLabel();
+        currentUserLabel = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -70,24 +83,24 @@ public class LibraryView extends javax.swing.JFrame {
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 397, Short.MAX_VALUE)
+            .addComponent(imageLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 360, Short.MAX_VALUE)
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 288, Short.MAX_VALUE)
+            .addComponent(imageLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 272, Short.MAX_VALUE)
         );
 
-        jButton1.setText(">");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        nextImageRightButton.setText(">");
+        nextImageRightButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                nextImageRightButtonActionPerformed(evt);
             }
         });
 
-        jButton2.setText("<");
-        jButton2.addActionListener(new java.awt.event.ActionListener() {
+        nextImageLeftButton.setText("<");
+        nextImageLeftButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton2ActionPerformed(evt);
+                nextImageLeftButtonActionPerformed(evt);
             }
         });
 
@@ -105,9 +118,19 @@ public class LibraryView extends javax.swing.JFrame {
             }
         });
 
-        jButton5.setText("Agregar Imagen");
+        addImageButton.setText("Agregar Imagen");
+        addImageButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                addImageButtonActionPerformed(evt);
+            }
+        });
 
-        jButton6.setText("Eliminar Imagen");
+        deleteImageButton.setText("Eliminar Imagen");
+        deleteImageButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                deleteImageButtonActionPerformed(evt);
+            }
+        });
 
         jLabel2.setText("Usuario:");
 
@@ -121,11 +144,22 @@ public class LibraryView extends javax.swing.JFrame {
         jLabel3.setFont(new java.awt.Font("Yu Gothic UI", 1, 22)); // NOI18N
         jLabel3.setText("Biblioteca");
 
+        categoryComboBox.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                categoryComboBoxItemStateChanged(evt);
+            }
+        });
+        categoryComboBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                categoryComboBoxActionPerformed(evt);
+            }
+        });
+
         jLabel4.setText("Imágenes guardadas:");
 
-        jLabel5.setText("0");
+        imageCountLabel.setText("0");
 
-        jLabel6.setText("user123");
+        currentUserLabel.setText("user123");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -147,9 +181,9 @@ public class LibraryView extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 116, Short.MAX_VALUE)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                .addComponent(jButton5, javax.swing.GroupLayout.PREFERRED_SIZE, 134, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(addImageButton, javax.swing.GroupLayout.PREFERRED_SIZE, 134, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(29, 29, 29)
-                                .addComponent(jButton6, javax.swing.GroupLayout.PREFERRED_SIZE, 134, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(deleteImageButton, javax.swing.GroupLayout.PREFERRED_SIZE, 134, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(241, 241, 241))
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                                 .addComponent(jLabel3)
@@ -158,24 +192,24 @@ public class LibraryView extends javax.swing.JFrame {
                                     .addGroup(layout.createSequentialGroup()
                                         .addComponent(jLabel2)
                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(jLabel6))
+                                        .addComponent(currentUserLabel))
                                     .addComponent(goBackToMenuButton))
                                 .addGap(37, 37, 37))))
                     .addGroup(layout.createSequentialGroup()
                         .addGap(37, 37, 37)
-                        .addComponent(jButton2)
+                        .addComponent(nextImageLeftButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(jLabel4)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jLabel5))
+                                .addComponent(imageCountLabel))
                             .addGroup(layout.createSequentialGroup()
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                                     .addComponent(imageComboBox, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                     .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jButton1)))
+                                .addComponent(nextImageRightButton)))
                         .addContainerGap())))
         );
         layout.setVerticalGroup(
@@ -185,7 +219,7 @@ public class LibraryView extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2)
                     .addComponent(jLabel3)
-                    .addComponent(jLabel6))
+                    .addComponent(currentUserLabel))
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addGap(9, 9, 9)
@@ -206,37 +240,36 @@ public class LibraryView extends javax.swing.JFrame {
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                                     .addComponent(jLabel4)
-                                    .addComponent(jLabel5))
+                                    .addComponent(imageCountLabel))
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addGroup(layout.createSequentialGroup()
                                         .addGap(138, 138, 138)
-                                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                        .addComponent(nextImageRightButton, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE))
                                     .addGroup(layout.createSequentialGroup()
                                         .addComponent(imageComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                             .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                                .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addComponent(nextImageLeftButton, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE)
                                                 .addGap(131, 131, 131)))
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                            .addComponent(jButton6, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                            .addComponent(jButton5, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                                            .addComponent(deleteImageButton, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                            .addComponent(addImageButton, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE))))
                                 .addGap(29, 29, 29))))))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jButton1ActionPerformed
+    private void nextImageRightButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nextImageRightButtonActionPerformed
+        nextImageButtons("right");
+    }//GEN-LAST:event_nextImageRightButtonActionPerformed
 
-    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jButton2ActionPerformed
+    private void nextImageLeftButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nextImageLeftButtonActionPerformed
+        nextImageButtons("left");
+    }//GEN-LAST:event_nextImageLeftButtonActionPerformed
 
     private void goBackToMenuButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_goBackToMenuButtonActionPerformed
         db.signOut();
@@ -273,16 +306,77 @@ public class LibraryView extends javax.swing.JFrame {
 
     private void removeCategoryButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_removeCategoryButtonActionPerformed
         int response = JOptionPane.showConfirmDialog(null, "Esta seguro que quiere eliminar \n la categoría seleccionada en el ComboBox");
-        if(response == JOptionPane.YES_OPTION) {
-            db.deleteCategory((String)categoryComboBox.getSelectedItem());
+        if (response == JOptionPane.YES_OPTION) {
+            db.deleteCategory(db.getDbCategoryByNameAndUser((String) categoryComboBox.getSelectedItem(), db.getUserSession()));
             JOptionPane.showMessageDialog(null, "Categoría eliminada con éxito");
             hydrateCategoryComboBox();
         }
     }//GEN-LAST:event_removeCategoryButtonActionPerformed
 
     private void imageComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_imageComboBoxActionPerformed
-        // TODO add your handling code here:
+        paintImage();
     }//GEN-LAST:event_imageComboBoxActionPerformed
+
+    private void addImageButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addImageButtonActionPerformed
+        JFileChooser jfc = new JFileChooser();
+        jfc.setFileFilter(new FileNameExtensionFilter("JPG, JPEG", "jpg", "jpeg"));
+
+        int respuesta = jfc.showOpenDialog(this);
+
+        if (respuesta == JFileChooser.APPROVE_OPTION) {
+            ClassLoader classLoader = getClass().getClassLoader();
+            String rutaArchivo = classLoader.getResource(getClass().getName().replace('.', '/') + ".class").getFile();
+            File archivoActual = new File(rutaArchivo);
+            File carpetaAnterior = archivoActual.getParentFile().getParentFile();
+
+            if (carpetaAnterior != null && carpetaAnterior.isDirectory()) {
+                String rutaCarpetaAnterior = carpetaAnterior.getAbsolutePath() + "\\images\\";
+                File selectedFile = jfc.getSelectedFile();
+                String nombreArchivoOriginal = selectedFile.getName();
+                String extension = nombreArchivoOriginal.substring(nombreArchivoOriginal.lastIndexOf("."));
+                // String filePath = selectedFile.getAbsolutePath();
+                String nameToSave = UUID.randomUUID().toString() + extension;
+                String filePath = rutaCarpetaAnterior + nameToSave;
+
+                try {
+                    File destinationFile = new File(filePath);
+                    Files.copy(selectedFile.toPath(), destinationFile.toPath());
+                    db.addImage(filePath, nameToSave, db.getDbCategoryByNameAndUser((String) categoryComboBox.getSelectedItem(), db.getUserSession()));
+                    JOptionPane.showMessageDialog(null, "Imagen agregada a categoría con éxito con éxito");
+                    hydrateImageComboBox();
+                    /*
+                ImageIcon imageIcon = new ImageIcon(filePath);
+                Image image = imageIcon.getImage().getScaledInstance(imageLabel.getWidth(), imageLabel.getHeight(), Image.SCALE_SMOOTH);
+                     */
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+            } else {
+                System.out.println("No se pudo obtener la carpeta anterior.");
+            }
+
+        }
+    }//GEN-LAST:event_addImageButtonActionPerformed
+
+    private void deleteImageButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteImageButtonActionPerformed
+        String itemOnCB = (String) imageComboBox.getSelectedItem();
+
+        int response = JOptionPane.showConfirmDialog(null, "Esta seguro que quiere eliminar \n la imagen seleccionada en el ComboBox");
+        if (response == JOptionPane.YES_OPTION) {
+            db.deleteImage(db.getDbImageByNameAndUser((String) imageComboBox.getSelectedItem(), db.getUserSession()));
+            JOptionPane.showMessageDialog(null, "Imagen eliminada con éxito");
+            hydrateImageComboBox();
+        }
+    }//GEN-LAST:event_deleteImageButtonActionPerformed
+
+    private void categoryComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_categoryComboBoxActionPerformed
+        hydrateImageComboBox();
+    }//GEN-LAST:event_categoryComboBoxActionPerformed
+
+    private void categoryComboBoxItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_categoryComboBoxItemStateChanged
+
+    }//GEN-LAST:event_categoryComboBoxItemStateChanged
 
     /**
      * @param args the command line arguments
@@ -325,44 +419,87 @@ public class LibraryView extends javax.swing.JFrame {
         if (db.getDbCategories().isEmpty()) {
             categoryComboBox.addItem("No hay categorías");
             categoryComboBox.setEnabled(false);
+            addImageButton.setEnabled(false);
         } else {
             categoryComboBox.setEnabled(true);
             for (Category ctg : db.getDbCategories()) {
                 categoryComboBox.addItem(ctg.getName());
             }
+
+            addImageButton.setEnabled(true);
+        }
+    }
+
+    private void hydrateImageComboBox() {
+        if (categoryComboBox.getSelectedItem() != null) {
+            imageComboBox.removeAllItems();
+
+            if (db.getDbImagesByUserAndCategory(db.getUserSession(), db.getDbCategoryByNameAndUser((String) categoryComboBox.getSelectedItem(), db.getUserSession())).isEmpty()) {
+                imageComboBox.addItem("No hay imágenes");
+                imageComboBox.setEnabled(false);
+                deleteImageButton.setEnabled(false);
+            } else {
+                imageComboBox.setEnabled(true);
+                for (ImageM img : db.getDbImagesByUserAndCategory(db.getUserSession(), db.getDbCategoryByNameAndUser((String) categoryComboBox.getSelectedItem(), db.getUserSession()))) {
+                    imageComboBox.addItem(img.getName());
+                }
+                deleteImageButton.setEnabled(true);
+            }
+
+            imageCountLabel.setText(Integer.toString(db.getDbImagesByUserAndCategory(db.getUserSession(), db.getDbCategoryByNameAndUser((String) categoryComboBox.getSelectedItem(), db.getUserSession())).size()));
+        }
+        
+    }
+
+    private void paintImage() {
+        String selectedImage = (String) imageComboBox.getSelectedItem();
+        if (!"No hay imágenes".equals(selectedImage) && selectedImage != null) {
+            File imageToSet = new File(db.getDbImageByNameAndUser(selectedImage, db.getUserSession()).getRoute());
+            ImageIcon imageIcon = new ImageIcon(imageToSet.getPath());
+            Image image = imageIcon.getImage().getScaledInstance(imageLabel.getWidth(), imageLabel.getHeight(), Image.SCALE_SMOOTH);
+            imageLabel.setIcon(new ImageIcon(image));
+        } else {
+            imageLabel.setIcon(null);
         }
     }
     
-    private void hydrateImageComboBox() {
-        imageComboBox.removeAllItems();
-
-        if (db.getDbCategories().isEmpty()) {
-            imageComboBox.addItem("No hay imágenes");
-            imageComboBox.setEnabled(false);
-        } else {
-            imageComboBox.setEnabled(true);
-            for (Image img : db.getDbImages()) {
-                categoryComboBox.addItem(img.getRoute());
+    private void nextImageButtons(String direction) {
+        if (!"No hay imágenes".equals((String) imageComboBox.getSelectedItem()) && imageComboBox.getModel().getSize() > 1) {
+            int actualElement = imageComboBox.getSelectedIndex();
+            
+            if("right".equals(direction)) {
+                if(actualElement == (imageComboBox.getModel().getSize() - 1)) {
+                    imageComboBox.setSelectedIndex(0);
+                } else {
+                    imageComboBox.setSelectedIndex(actualElement + 1);
+                }
+            } else if("left".equals(direction)) {
+                if(actualElement == 0) {
+                    imageComboBox.setSelectedIndex((imageComboBox.getModel().getSize() - 1));
+                } else {
+                    imageComboBox.setSelectedIndex(actualElement - 1);
+                }
             }
         }
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton addCategoryButton;
+    private javax.swing.JButton addImageButton;
     private javax.swing.JComboBox<String> categoryComboBox;
+    private javax.swing.JLabel currentUserLabel;
+    private javax.swing.JButton deleteImageButton;
     private javax.swing.JButton goBackToMenuButton;
     private javax.swing.JComboBox<String> imageComboBox;
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
-    private javax.swing.JButton jButton5;
-    private javax.swing.JButton jButton6;
+    private javax.swing.JLabel imageCountLabel;
+    private javax.swing.JLabel imageLabel;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
-    private javax.swing.JLabel jLabel5;
-    private javax.swing.JLabel jLabel6;
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JButton nextImageLeftButton;
+    private javax.swing.JButton nextImageRightButton;
     private javax.swing.JButton removeCategoryButton;
     // End of variables declaration//GEN-END:variables
 }
