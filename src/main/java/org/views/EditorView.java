@@ -4,17 +4,36 @@
  */
 package org.views;
 
+import java.io.File;
+import javax.swing.ImageIcon;
+import javax.swing.JFileChooser;
+import java.awt.Image;
+import java.awt.image.BufferedImage;
+import java.io.FileFilter;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JOptionPane;
+import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.imageio.ImageIO;
+import java.awt.Color;
+import java.awt.Graphics2D;
+import java.awt.geom.AffineTransform;
+
 /**
  *
  * @author DELL
  */
 public class EditorView extends javax.swing.JFrame {
 
+    private File uploadedImage = null;
+
     /**
      * Creates new form EditorView
      */
     public EditorView() {
         initComponents();
+        this.setLocationRelativeTo(null);
     }
 
     /**
@@ -26,71 +45,83 @@ public class EditorView extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        buttonGroup1 = new javax.swing.ButtonGroup();
+        editionOptionsButtonGroup = new javax.swing.ButtonGroup();
         jLabel3 = new javax.swing.JLabel();
-        jLabel1 = new javax.swing.JLabel();
+        routeImageLabel = new javax.swing.JLabel();
         jPanel1 = new javax.swing.JPanel();
-        jRadioButton1 = new javax.swing.JRadioButton();
-        jRadioButton2 = new javax.swing.JRadioButton();
-        jRadioButton3 = new javax.swing.JRadioButton();
-        jRadioButton4 = new javax.swing.JRadioButton();
-        jRadioButton5 = new javax.swing.JRadioButton();
-        jButton2 = new javax.swing.JButton();
-        jButton1 = new javax.swing.JButton();
+        jpegToBMPRadioButton = new javax.swing.JRadioButton();
+        jpegCopyRadioButton = new javax.swing.JRadioButton();
+        modifyImageRadioButton = new javax.swing.JRadioButton();
+        redGreenBlueSepiaRadioButton = new javax.swing.JRadioButton();
+        blackAndWhiteRadioButton = new javax.swing.JRadioButton();
+        runOptionButton = new javax.swing.JButton();
+        selectImageButton = new javax.swing.JButton();
         jPanel2 = new javax.swing.JPanel();
-        jButton7 = new javax.swing.JButton();
+        imageLabel = new javax.swing.JLabel();
+        goBackToMenuButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         jLabel3.setFont(new java.awt.Font("Yu Gothic UI", 1, 22)); // NOI18N
         jLabel3.setText("Editor");
 
-        jLabel1.setText("C:/Desktop/Images/image.jpg");
+        routeImageLabel.setText("No image");
 
         jPanel1.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
-        jRadioButton1.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        jRadioButton1.setText("JPEG a BMP y viceversa");
-        jRadioButton1.addActionListener(new java.awt.event.ActionListener() {
+        editionOptionsButtonGroup.add(jpegToBMPRadioButton);
+        jpegToBMPRadioButton.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        jpegToBMPRadioButton.setSelected(true);
+        jpegToBMPRadioButton.setLabel("JPG/JPEG a BMP y viceversa");
+        jpegToBMPRadioButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jRadioButton1ActionPerformed(evt);
+                jpegToBMPRadioButtonActionPerformed(evt);
             }
         });
 
-        jRadioButton2.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        jRadioButton2.setText("copia JPEG");
-        jRadioButton2.addActionListener(new java.awt.event.ActionListener() {
+        editionOptionsButtonGroup.add(jpegCopyRadioButton);
+        jpegCopyRadioButton.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        jpegCopyRadioButton.setText("copia JPEG");
+        jpegCopyRadioButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jRadioButton2ActionPerformed(evt);
+                jpegCopyRadioButtonActionPerformed(evt);
             }
         });
 
-        jRadioButton3.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        jRadioButton3.setText("Modificar Imagen");
-        jRadioButton3.addActionListener(new java.awt.event.ActionListener() {
+        editionOptionsButtonGroup.add(modifyImageRadioButton);
+        modifyImageRadioButton.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        modifyImageRadioButton.setText("Modificar Imagen");
+        modifyImageRadioButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jRadioButton3ActionPerformed(evt);
+                modifyImageRadioButtonActionPerformed(evt);
             }
         });
 
-        jRadioButton4.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        jRadioButton4.setText("Rojo Verde Azul Sepia");
-        jRadioButton4.addActionListener(new java.awt.event.ActionListener() {
+        editionOptionsButtonGroup.add(redGreenBlueSepiaRadioButton);
+        redGreenBlueSepiaRadioButton.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        redGreenBlueSepiaRadioButton.setText("Rojo Verde Azul Sepia");
+        redGreenBlueSepiaRadioButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jRadioButton4ActionPerformed(evt);
+                redGreenBlueSepiaRadioButtonActionPerformed(evt);
             }
         });
 
-        jRadioButton5.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        jRadioButton5.setText("Blanco y negro");
-        jRadioButton5.addActionListener(new java.awt.event.ActionListener() {
+        editionOptionsButtonGroup.add(blackAndWhiteRadioButton);
+        blackAndWhiteRadioButton.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        blackAndWhiteRadioButton.setText("Blanco y negro");
+        blackAndWhiteRadioButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jRadioButton5ActionPerformed(evt);
+                blackAndWhiteRadioButtonActionPerformed(evt);
             }
         });
 
-        jButton2.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        jButton2.setText("Ejecutar");
+        runOptionButton.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        runOptionButton.setText("Ejecutar");
+        runOptionButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                runOptionButtonActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -101,38 +132,38 @@ public class EditorView extends javax.swing.JFrame {
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(23, 23, 23)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jRadioButton2)
-                            .addComponent(jRadioButton3)
-                            .addComponent(jRadioButton5)
-                            .addComponent(jRadioButton1)
-                            .addComponent(jRadioButton4)))
+                            .addComponent(jpegCopyRadioButton)
+                            .addComponent(modifyImageRadioButton)
+                            .addComponent(blackAndWhiteRadioButton)
+                            .addComponent(jpegToBMPRadioButton)
+                            .addComponent(redGreenBlueSepiaRadioButton)))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(112, 112, 112)
-                        .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 89, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(runOptionButton, javax.swing.GroupLayout.PREFERRED_SIZE, 89, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap(133, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(26, 26, 26)
-                .addComponent(jRadioButton1)
+                .addComponent(jpegToBMPRadioButton)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jRadioButton2)
+                .addComponent(jpegCopyRadioButton)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jRadioButton4)
+                .addComponent(redGreenBlueSepiaRadioButton)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jRadioButton3)
+                .addComponent(modifyImageRadioButton)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jRadioButton5)
+                .addComponent(blackAndWhiteRadioButton)
                 .addGap(28, 28, 28)
-                .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(runOptionButton, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(23, Short.MAX_VALUE))
         );
 
-        jButton1.setText("Seleccionar Imagen");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        selectImageButton.setText("Seleccionar Imagen");
+        selectImageButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                selectImageButtonActionPerformed(evt);
             }
         });
 
@@ -142,37 +173,42 @@ public class EditorView extends javax.swing.JFrame {
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 347, Short.MAX_VALUE)
+            .addComponent(imageLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 334, Short.MAX_VALUE)
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 226, Short.MAX_VALUE)
+            .addComponent(imageLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
-        jButton7.setText("Regresar al menú");
+        goBackToMenuButton.setText("Regresar al menú");
+        goBackToMenuButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                goBackToMenuButtonActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jButton1)
-                .addGap(159, 159, 159))
             .addGroup(layout.createSequentialGroup()
                 .addGap(38, 38, 38)
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(55, 55, 55)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel1))
-                .addContainerGap(38, Short.MAX_VALUE))
+                    .addComponent(routeImageLabel)
+                    .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(layout.createSequentialGroup()
                 .addGap(385, 385, 385)
                 .addComponent(jLabel3)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jButton7)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 226, Short.MAX_VALUE)
+                .addComponent(goBackToMenuButton)
                 .addGap(29, 29, 29))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(selectImageButton)
+                .addGap(157, 157, 157))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -184,45 +220,225 @@ public class EditorView extends javax.swing.JFrame {
                         .addGap(45, 45, 45))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addContainerGap()
-                        .addComponent(jButton7)
+                        .addComponent(goBackToMenuButton)
                         .addGap(49, 49, 49)))
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jLabel1)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(25, Short.MAX_VALUE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 9, Short.MAX_VALUE)
+                .addComponent(routeImageLabel)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(selectImageButton, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jButton1ActionPerformed
+    private void selectImageButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_selectImageButtonActionPerformed
+        JFileChooser jfc = new JFileChooser();
+        jfc.setFileFilter(new FileNameExtensionFilter("JPEG, JPG y BMP images", "jpg", "jpeg", "bmp"));
+        int respuesta = jfc.showOpenDialog(this);
 
-    private void jRadioButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButton1ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jRadioButton1ActionPerformed
+        if (respuesta == JFileChooser.APPROVE_OPTION) {
+            File file = jfc.getSelectedFile();
+            uploadedImage = file;
+            routeImageLabel.setText(file.getAbsolutePath());
+            String extension = uploadedImage.getName().substring(uploadedImage.getName().lastIndexOf(".") + 1);
 
-    private void jRadioButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButton2ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jRadioButton2ActionPerformed
+            if ("bmp".equals(extension)) {
+                BufferedImage bmpImage = null;
 
-    private void jRadioButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButton3ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jRadioButton3ActionPerformed
+                try {
+                    bmpImage = ImageIO.read(file);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
 
-    private void jRadioButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButton4ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jRadioButton4ActionPerformed
+                ImageIcon bmpIcon = new ImageIcon(bmpImage);
+                Image image = bmpIcon.getImage().getScaledInstance(imageLabel.getWidth(), imageLabel.getHeight(), Image.SCALE_SMOOTH);
+                imageLabel.setIcon(new ImageIcon(image));
+            } else {
+                ImageIcon imageIcon = new ImageIcon(file.getPath());
+                Image image = imageIcon.getImage().getScaledInstance(imageLabel.getWidth(), imageLabel.getHeight(), Image.SCALE_SMOOTH);
+                imageLabel.setIcon(new ImageIcon(image));
+            }
+        }
+    }//GEN-LAST:event_selectImageButtonActionPerformed
 
-    private void jRadioButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButton5ActionPerformed
+    private void jpegToBMPRadioButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jpegToBMPRadioButtonActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jRadioButton5ActionPerformed
+    }//GEN-LAST:event_jpegToBMPRadioButtonActionPerformed
+
+    private void jpegCopyRadioButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jpegCopyRadioButtonActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jpegCopyRadioButtonActionPerformed
+
+    private void modifyImageRadioButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_modifyImageRadioButtonActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_modifyImageRadioButtonActionPerformed
+
+    private void redGreenBlueSepiaRadioButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_redGreenBlueSepiaRadioButtonActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_redGreenBlueSepiaRadioButtonActionPerformed
+
+    private void blackAndWhiteRadioButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_blackAndWhiteRadioButtonActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_blackAndWhiteRadioButtonActionPerformed
+
+    private void goBackToMenuButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_goBackToMenuButtonActionPerformed
+        MenuView mv = new MenuView();
+        mv.setVisible(true);
+        this.dispose();
+    }//GEN-LAST:event_goBackToMenuButtonActionPerformed
+
+    private void runOptionButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_runOptionButtonActionPerformed
+        // TODO: Separar estos métodos en clases
+
+        if (uploadedImage != null) {
+            if (jpegToBMPRadioButton.isSelected()) {
+                try {
+                    JFileChooser jfc = new JFileChooser();
+                    jfc.setDialogTitle("Seleccione dónde quiere guardar la imagen");
+                    jfc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+                    int result = jfc.showOpenDialog(null);
+
+                    if (result == JFileChooser.APPROVE_OPTION) {
+                        String extension = uploadedImage.getName().substring(uploadedImage.getName().lastIndexOf(".") + 1);
+                        BufferedImage imagen = ImageIO.read(uploadedImage);
+
+                        if ("bmp".equals(extension)) {
+                            BufferedImage jpgImage = new BufferedImage(imagen.getWidth(), imagen.getHeight(), BufferedImage.TYPE_INT_RGB);
+                            jpgImage.createGraphics().drawImage(imagen, 0, 0, Color.WHITE, null);
+                            File output = new File(jfc.getSelectedFile().getAbsolutePath() + "\\" + uploadedImage.getName().replace(".bmp", ".jpg"));
+                            ImageIO.write(jpgImage, "jpg", output);
+                        } else {
+                            BufferedImage convertedImage = new BufferedImage(imagen.getWidth(), imagen.getHeight(), BufferedImage.TYPE_BYTE_INDEXED);
+                            convertedImage.createGraphics().drawImage(imagen, 0, 0, null);
+                            File bmpFile = new File(jfc.getSelectedFile().getAbsolutePath() + "\\" + uploadedImage.getName().replace(".jpg", ".bmp"));
+                            ImageIO.write(convertedImage, "bmp", bmpFile);
+                        }
+
+                        JOptionPane.showMessageDialog(null, "El archivo ha sido convertido con éxito! \nPuedes ir a checarlo");
+                    }
+                } catch (IOException ex) {
+                    Logger.getLogger(EditorView.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+
+            if (jpegCopyRadioButton.isSelected()) {
+                System.out.println("2 boton seleccionado");
+            }
+
+            if (redGreenBlueSepiaRadioButton.isSelected()) {
+                String extension = uploadedImage.getName().substring(uploadedImage.getName().lastIndexOf(".") + 1);
+
+                if ("bmp".equals(extension)) {
+                    JOptionPane.showMessageDialog(null, "Error: Debe de subir una imagen JPG", "Error", JOptionPane.ERROR_MESSAGE);
+                } else {
+                    try {
+                        JFileChooser jfc = new JFileChooser();
+                        jfc.setDialogTitle("Seleccione dónde quiere guardar las 4 imágenes");
+                        jfc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+                        int result = jfc.showOpenDialog(null);
+
+                        if (result == JFileChooser.APPROVE_OPTION) {
+                            BufferedImage imagen = ImageIO.read(uploadedImage);
+                            ImageIO.write(applyRedTonesFilter(imagen), "jpg", new File(jfc.getSelectedFile().getAbsolutePath() + "\\" + "Red-" + uploadedImage.getName()));
+                            ImageIO.write(applyGreenTonesFilter(imagen), "jpg", new File(jfc.getSelectedFile().getAbsolutePath() + "\\" + "Green-" + uploadedImage.getName()));
+                            ImageIO.write(applyBlueTonesFilter(imagen), "jpg", new File(jfc.getSelectedFile().getAbsolutePath() + "\\" + "Blue-" + uploadedImage.getName()));
+                            ImageIO.write(applySepiaFilter(imagen), "jpg", new File(jfc.getSelectedFile().getAbsolutePath() + "\\" + "Sepia-" + uploadedImage.getName()));
+                            JOptionPane.showMessageDialog(null, "El archivo ha sido convertido con éxito! \nPuedes ir a checar las 4 imágenes");
+                        }
+                    } catch (IOException ex) {
+                        Logger.getLogger(EditorView.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }
+            }
+
+            if (modifyImageRadioButton.isSelected()) {
+                String extension = uploadedImage.getName().substring(uploadedImage.getName().lastIndexOf(".") + 1);
+
+                if ("bmp".equals(extension)) {
+                    JOptionPane.showMessageDialog(null, "Error: Debe de subir una imagen JPG", "Error", JOptionPane.ERROR_MESSAGE);
+                } else {
+                    try {
+                        JFileChooser jfc = new JFileChooser();
+                        jfc.setDialogTitle("Seleccione dónde quiere guardar las 2 imágenes");
+                        jfc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+                        int result = jfc.showOpenDialog(null);
+
+                        if (result == JFileChooser.APPROVE_OPTION) {
+                            BufferedImage image = ImageIO.read(uploadedImage);
+
+                            int w = image.getWidth();
+                            int h = image.getHeight();
+
+                            BufferedImage hRotated = new BufferedImage(w, h, image.getType());
+                            Graphics2D g = hRotated.createGraphics();
+                            g.drawImage(image, 0, h, w, -h, null);
+                            g.dispose();
+
+                            BufferedImage vRotated = new BufferedImage(w, h, image.getType());
+                            Graphics2D g2 = vRotated.createGraphics();
+                            g2.drawImage(image, w, 0, -w, h, null);
+                            g2.dispose();
+
+                            ImageIO.write(hRotated, "jpg", new File(jfc.getSelectedFile().getAbsolutePath() + "\\" + "Hrotation-" + uploadedImage.getName()));
+                            ImageIO.write(vRotated, "jpg", new File(jfc.getSelectedFile().getAbsolutePath() + "\\" + "Vrotation-" + uploadedImage.getName()));
+
+                            JOptionPane.showMessageDialog(null, "El archivo ha sido convertido con éxito! \nPuedes ir a checar las 2 imágenes");
+                        }
+                    } catch (IOException ex) {
+                        Logger.getLogger(EditorView.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }
+
+            }
+
+            if (blackAndWhiteRadioButton.isSelected()) {
+                String extension = uploadedImage.getName().substring(uploadedImage.getName().lastIndexOf(".") + 1);
+
+                if ("bmp".equals(extension)) {
+                    JOptionPane.showMessageDialog(null, "Error: Debe de subir una imagen JPG", "Error", JOptionPane.ERROR_MESSAGE);
+                } else {
+                    try {
+                        JFileChooser jfc = new JFileChooser();
+                        jfc.setDialogTitle("Seleccione dónde quiere guardar las 4 imágenes");
+                        jfc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+                        int result = jfc.showOpenDialog(null);
+
+                        if (result == JFileChooser.APPROVE_OPTION) {
+                            BufferedImage imagen = ImageIO.read(uploadedImage);
+
+                            BufferedImage imagenBN = new BufferedImage(imagen.getWidth(), imagen.getHeight(), BufferedImage.TYPE_BYTE_GRAY);
+                            Graphics2D g2d = imagenBN.createGraphics();
+                            g2d.drawImage(imagen, 0, 0, null);
+                            g2d.dispose();
+
+                            for (int y = 0; y < imagenBN.getHeight(); y++) {
+                                for (int x = 0; x < imagenBN.getWidth(); x++) {
+                                    int rgb = imagenBN.getRGB(x, y);
+                                    int r = (rgb >> 16) & 0xFF;
+                                    int g = (rgb >> 8) & 0xFF;
+                                    int b = rgb & 0xFF;
+                                    int gray = (int) (0.299 * r + 0.587 * g + 0.114 * b);
+                                    imagenBN.setRGB(x, y, (gray << 16) | (gray << 8) | gray);
+                                }
+                            }
+                            
+                            ImageIO.write(imagenBN, "jpg", new File(jfc.getSelectedFile().getAbsolutePath() + "\\" + "BN-" + uploadedImage.getName()));
+                            JOptionPane.showMessageDialog(null, "El archivo ha sido convertido con éxito! \nPuedes ir a checarla");
+                        }
+                    } catch (IOException ex) {
+                        Logger.getLogger(EditorView.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }
+            }
+        } else {
+            JOptionPane.showMessageDialog(null, "Error: Debe de subir primero una imagen", "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }//GEN-LAST:event_runOptionButtonActionPerformed
 
     /**
      * @param args the command line arguments
@@ -259,19 +475,90 @@ public class EditorView extends javax.swing.JFrame {
         });
     }
 
+    private BufferedImage copyImage(BufferedImage image) {
+        BufferedImage copy = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_RGB);
+        for (int x = 0; x < image.getWidth(); x++) {
+            for (int y = 0; y < image.getHeight(); y++) {
+                copy.setRGB(x, y, image.getRGB(x, y));
+            }
+        }
+        return copy;
+    }
+
+    private BufferedImage applyRedTonesFilter(BufferedImage image) {
+        BufferedImage copy = copyImage(image);
+        for (int x = 0; x < copy.getWidth(); x++) {
+            for (int y = 0; y < copy.getHeight(); y++) {
+                Color color = new Color(copy.getRGB(x, y));
+                int red = color.getRed();
+                Color newColor = new Color(red, 0, 0);
+                copy.setRGB(x, y, newColor.getRGB());
+            }
+        }
+        return copy;
+    }
+
+    private BufferedImage applyBlueTonesFilter(BufferedImage image) {
+        BufferedImage copy = copyImage(image);
+        for (int x = 0; x < copy.getWidth(); x++) {
+            for (int y = 0; y < copy.getHeight(); y++) {
+                Color color = new Color(copy.getRGB(x, y));
+                int blue = color.getBlue();
+                Color newColor = new Color(0, 0, blue);
+                copy.setRGB(x, y, newColor.getRGB());
+            }
+        }
+        return copy;
+    }
+
+    private BufferedImage applyGreenTonesFilter(BufferedImage image) {
+        BufferedImage copy = copyImage(image);
+        for (int x = 0; x < copy.getWidth(); x++) {
+            for (int y = 0; y < copy.getHeight(); y++) {
+                Color color = new Color(copy.getRGB(x, y));
+                int green = color.getGreen();
+                Color newColor = new Color(0, green, 0);
+                copy.setRGB(x, y, newColor.getRGB());
+            }
+        }
+        return copy;
+    }
+
+    private BufferedImage applySepiaFilter(BufferedImage image) {
+        BufferedImage copy = copyImage(image);
+        for (int x = 0; x < copy.getWidth(); x++) {
+            for (int y = 0; y < copy.getHeight(); y++) {
+                Color color = new Color(copy.getRGB(x, y));
+                int r = color.getRed();
+                int g = color.getGreen();
+                int b = color.getBlue();
+                int tr = (int) (0.393 * r + 0.769 * g + 0.189 * b);
+                int tg = (int) (0.349 * r + 0.686 * g + 0.168 * b);
+                int tb = (int) (0.272 * r + 0.534 * g + 0.131 * b);
+                tr = Math.min(tr, 255);
+                tg = Math.min(tg, 255);
+                tb = Math.min(tb, 255);
+                Color newColor = new Color(tr, tg, tb);
+                copy.setRGB(x, y, newColor.getRGB());
+            }
+        }
+        return copy;
+    }
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.ButtonGroup buttonGroup1;
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
-    private javax.swing.JButton jButton7;
-    private javax.swing.JLabel jLabel1;
+    private javax.swing.JRadioButton blackAndWhiteRadioButton;
+    private javax.swing.ButtonGroup editionOptionsButtonGroup;
+    private javax.swing.JButton goBackToMenuButton;
+    private javax.swing.JLabel imageLabel;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
-    private javax.swing.JRadioButton jRadioButton1;
-    private javax.swing.JRadioButton jRadioButton2;
-    private javax.swing.JRadioButton jRadioButton3;
-    private javax.swing.JRadioButton jRadioButton4;
-    private javax.swing.JRadioButton jRadioButton5;
+    private javax.swing.JRadioButton jpegCopyRadioButton;
+    private javax.swing.JRadioButton jpegToBMPRadioButton;
+    private javax.swing.JRadioButton modifyImageRadioButton;
+    private javax.swing.JRadioButton redGreenBlueSepiaRadioButton;
+    private javax.swing.JLabel routeImageLabel;
+    private javax.swing.JButton runOptionButton;
+    private javax.swing.JButton selectImageButton;
     // End of variables declaration//GEN-END:variables
 }
