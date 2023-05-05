@@ -19,6 +19,13 @@ import javax.imageio.ImageIO;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
+import org.utils.BMPtoJPEGImage;
+import org.utils.JPEGHandler;
+import org.utils.JPEGtoBMPImage;
+import org.utils.BmpHandlerCopy;
+import org.utils.JPEGImageHandlerBN;
+import org.utils.JPEGImageHandlerColors;
+import org.utils.JPEGImageHandlerRotator;
 
 /**
  *
@@ -297,37 +304,66 @@ public class EditorView extends javax.swing.JFrame {
 
         if (uploadedImage != null) {
             if (jpegToBMPRadioButton.isSelected()) {
-                try {
-                    JFileChooser jfc = new JFileChooser();
-                    jfc.setDialogTitle("Seleccione dónde quiere guardar la imagen");
-                    jfc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-                    int result = jfc.showOpenDialog(null);
+                JFileChooser jfc = new JFileChooser();
+                jfc.setDialogTitle("Seleccione dónde quiere guardar la imagen");
+                jfc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+                int result = jfc.showOpenDialog(null);
 
-                    if (result == JFileChooser.APPROVE_OPTION) {
-                        String extension = uploadedImage.getName().substring(uploadedImage.getName().lastIndexOf(".") + 1);
-                        BufferedImage imagen = ImageIO.read(uploadedImage);
+                if (result == JFileChooser.APPROVE_OPTION) {
+                    String extension = uploadedImage.getName().substring(uploadedImage.getName().lastIndexOf(".") + 1);
 
+                    try {
                         if ("bmp".equals(extension)) {
-                            BufferedImage jpgImage = new BufferedImage(imagen.getWidth(), imagen.getHeight(), BufferedImage.TYPE_INT_RGB);
-                            jpgImage.createGraphics().drawImage(imagen, 0, 0, Color.WHITE, null);
-                            File output = new File(jfc.getSelectedFile().getAbsolutePath() + "\\" + uploadedImage.getName().replace(".bmp", ".jpg"));
-                            ImageIO.write(jpgImage, "jpg", output);
+                            BMPtoJPEGImage btj = new BMPtoJPEGImage(jfc.getSelectedFile().getAbsolutePath());
+                            btj.setUploadedImage(uploadedImage);
+                            JPEGHandler.runHandler(btj);
                         } else {
-                            BufferedImage convertedImage = new BufferedImage(imagen.getWidth(), imagen.getHeight(), BufferedImage.TYPE_BYTE_INDEXED);
-                            convertedImage.createGraphics().drawImage(imagen, 0, 0, null);
-                            File bmpFile = new File(jfc.getSelectedFile().getAbsolutePath() + "\\" + uploadedImage.getName().replace(".jpg", ".bmp"));
-                            ImageIO.write(convertedImage, "bmp", bmpFile);
+                            JPEGtoBMPImage jtb = new JPEGtoBMPImage(jfc.getSelectedFile().getAbsolutePath());
+                            jtb.setUploadedImage(uploadedImage);
+                            JPEGHandler.runHandler(jtb);
                         }
-
+                        
                         JOptionPane.showMessageDialog(null, "El archivo ha sido convertido con éxito! \nPuedes ir a checarlo");
+                    } catch (Exception ex) {
+                        Logger.getLogger(EditorView.class.getName()).log(Level.SEVERE, null, ex);
                     }
-                } catch (IOException ex) {
-                    Logger.getLogger(EditorView.class.getName()).log(Level.SEVERE, null, ex);
                 }
+
             }
 
             if (jpegCopyRadioButton.isSelected()) {
-                System.out.println("2 boton seleccionado");
+                JFileChooser jfc = new JFileChooser();
+                jfc.setDialogTitle("Seleccione dónde quiere guardar la imagen");
+                jfc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+                int result = jfc.showOpenDialog(null);
+                
+                if (result == JFileChooser.APPROVE_OPTION) {
+                    String extension = uploadedImage.getName().substring(uploadedImage.getName().lastIndexOf(".") + 1);
+
+                    try {
+                        if ("bmp".equals(extension)) {
+                            JOptionPane.showMessageDialog(null, "Error: Debe de subir una imagen JPG", "Error", JOptionPane.ERROR_MESSAGE);
+                        } else {
+                            JPEGtoBMPImage jtb = new JPEGtoBMPImage(jfc.getSelectedFile().getAbsolutePath());
+                            jtb.setUploadedImage(uploadedImage);
+                            jtb.setIsForMethod(true);
+                            System.out.println("Convirtiedo imagen a BMP...");
+                            JPEGHandler.runHandler(jtb);
+                            
+                            System.out.println("Realizando copia de imagen...");
+                            JPEGHandler.runHandler(new BmpHandlerCopy(jfc.getSelectedFile().getAbsolutePath() + "\\" + jtb.getGeneratedId() + "-" + uploadedImage.getName()));
+                            
+                            System.out.println("Convirtiendo imagen generada a JPG...");
+                            BMPtoJPEGImage btj = new BMPtoJPEGImage(jfc.getSelectedFile().getAbsolutePath());
+                            btj.setUploadedImage(new File("..\\rubbish_images\\" + jtb.getGeneratedId() + "-" + uploadedImage.getName()));
+                            JPEGHandler.runHandler(btj);
+                            
+                            JOptionPane.showMessageDialog(null, "El archivo se ha copiado con éxito! \nPuedes ir a checarlo");
+                        }
+                    } catch (Exception ex) {
+                        Logger.getLogger(EditorView.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }
             }
 
             if (redGreenBlueSepiaRadioButton.isSelected()) {
@@ -343,14 +379,24 @@ public class EditorView extends javax.swing.JFrame {
                         int result = jfc.showOpenDialog(null);
 
                         if (result == JFileChooser.APPROVE_OPTION) {
-                            BufferedImage imagen = ImageIO.read(uploadedImage);
-                            ImageIO.write(applyRedTonesFilter(imagen), "jpg", new File(jfc.getSelectedFile().getAbsolutePath() + "\\" + "Red-" + uploadedImage.getName()));
-                            ImageIO.write(applyGreenTonesFilter(imagen), "jpg", new File(jfc.getSelectedFile().getAbsolutePath() + "\\" + "Green-" + uploadedImage.getName()));
-                            ImageIO.write(applyBlueTonesFilter(imagen), "jpg", new File(jfc.getSelectedFile().getAbsolutePath() + "\\" + "Blue-" + uploadedImage.getName()));
-                            ImageIO.write(applySepiaFilter(imagen), "jpg", new File(jfc.getSelectedFile().getAbsolutePath() + "\\" + "Sepia-" + uploadedImage.getName()));
+                            
+                            JPEGtoBMPImage jtb = new JPEGtoBMPImage(jfc.getSelectedFile().getAbsolutePath());
+                            jtb.setUploadedImage(uploadedImage);
+                            jtb.setIsForMethod(true);
+                            System.out.println("Convirtiedo imagen a BMP...");
+                            JPEGHandler.runHandler(jtb);
+                            
+                            System.out.println("Realizando conversión de colores a imagen...");
+                            JPEGHandler.runHandler(new JPEGImageHandlerColors(jfc.getSelectedFile().getAbsolutePath() + "\\" + jtb.getGeneratedId() + "-" + uploadedImage.getName()));
+                            
+                            System.out.println("Convirtiendo imagen generada a JPG...");
+                            BMPtoJPEGImage btj = new BMPtoJPEGImage(jfc.getSelectedFile().getAbsolutePath());
+                            btj.setUploadedImage(new File("..\\rubbish_images\\" + jtb.getGeneratedId() + "-" + uploadedImage.getName()));
+                            JPEGHandler.runHandler(btj);
+                            
                             JOptionPane.showMessageDialog(null, "El archivo ha sido convertido con éxito! \nPuedes ir a checar las 4 imágenes");
                         }
-                    } catch (IOException ex) {
+                    } catch (Exception ex) {
                         Logger.getLogger(EditorView.class.getName()).log(Level.SEVERE, null, ex);
                     }
                 }
@@ -369,27 +415,23 @@ public class EditorView extends javax.swing.JFrame {
                         int result = jfc.showOpenDialog(null);
 
                         if (result == JFileChooser.APPROVE_OPTION) {
-                            BufferedImage image = ImageIO.read(uploadedImage);
-
-                            int w = image.getWidth();
-                            int h = image.getHeight();
-
-                            BufferedImage hRotated = new BufferedImage(w, h, image.getType());
-                            Graphics2D g = hRotated.createGraphics();
-                            g.drawImage(image, 0, h, w, -h, null);
-                            g.dispose();
-
-                            BufferedImage vRotated = new BufferedImage(w, h, image.getType());
-                            Graphics2D g2 = vRotated.createGraphics();
-                            g2.drawImage(image, w, 0, -w, h, null);
-                            g2.dispose();
-
-                            ImageIO.write(hRotated, "jpg", new File(jfc.getSelectedFile().getAbsolutePath() + "\\" + "Hrotation-" + uploadedImage.getName()));
-                            ImageIO.write(vRotated, "jpg", new File(jfc.getSelectedFile().getAbsolutePath() + "\\" + "Vrotation-" + uploadedImage.getName()));
+                            JPEGtoBMPImage jtb = new JPEGtoBMPImage(jfc.getSelectedFile().getAbsolutePath());
+                            jtb.setUploadedImage(uploadedImage);
+                            jtb.setIsForMethod(true);
+                            System.out.println("Convirtiedo imagen a BMP...");
+                            JPEGHandler.runHandler(jtb);
+                            
+                            System.out.println("Realizando conversión de rotación de imagen...");
+                            JPEGHandler.runHandler(new JPEGImageHandlerRotator(jfc.getSelectedFile().getAbsolutePath() + "\\" + jtb.getGeneratedId() + "-" + uploadedImage.getName()));
+                            
+                            System.out.println("Convirtiendo imagen generada a JPG...");
+                            BMPtoJPEGImage btj = new BMPtoJPEGImage(jfc.getSelectedFile().getAbsolutePath());
+                            btj.setUploadedImage(new File("..\\rubbish_images\\" + jtb.getGeneratedId() + "-" + uploadedImage.getName()));
+                            JPEGHandler.runHandler(btj);
 
                             JOptionPane.showMessageDialog(null, "El archivo ha sido convertido con éxito! \nPuedes ir a checar las 2 imágenes");
                         }
-                    } catch (IOException ex) {
+                    } catch (Exception ex) {
                         Logger.getLogger(EditorView.class.getName()).log(Level.SEVERE, null, ex);
                     }
                 }
@@ -411,26 +453,23 @@ public class EditorView extends javax.swing.JFrame {
                         if (result == JFileChooser.APPROVE_OPTION) {
                             BufferedImage imagen = ImageIO.read(uploadedImage);
 
-                            BufferedImage imagenBN = new BufferedImage(imagen.getWidth(), imagen.getHeight(), BufferedImage.TYPE_BYTE_GRAY);
-                            Graphics2D g2d = imagenBN.createGraphics();
-                            g2d.drawImage(imagen, 0, 0, null);
-                            g2d.dispose();
-
-                            for (int y = 0; y < imagenBN.getHeight(); y++) {
-                                for (int x = 0; x < imagenBN.getWidth(); x++) {
-                                    int rgb = imagenBN.getRGB(x, y);
-                                    int r = (rgb >> 16) & 0xFF;
-                                    int g = (rgb >> 8) & 0xFF;
-                                    int b = rgb & 0xFF;
-                                    int gray = (int) (0.299 * r + 0.587 * g + 0.114 * b);
-                                    imagenBN.setRGB(x, y, (gray << 16) | (gray << 8) | gray);
-                                }
-                            }
+                            JPEGtoBMPImage jtb = new JPEGtoBMPImage(jfc.getSelectedFile().getAbsolutePath());
+                            jtb.setUploadedImage(uploadedImage);
+                            jtb.setIsForMethod(true);
+                            System.out.println("Convirtiedo imagen a BMP...");
+                            JPEGHandler.runHandler(jtb);
                             
-                            ImageIO.write(imagenBN, "jpg", new File(jfc.getSelectedFile().getAbsolutePath() + "\\" + "BN-" + uploadedImage.getName()));
+                            System.out.println("Realizando conversión de blanco y negro de imagen...");
+                            JPEGHandler.runHandler(new JPEGImageHandlerBN(jfc.getSelectedFile().getAbsolutePath() + "\\" + jtb.getGeneratedId() + "-" + uploadedImage.getName()));
+                            
+                            System.out.println("Convirtiendo imagen generada a JPG...");
+                            BMPtoJPEGImage btj = new BMPtoJPEGImage(jfc.getSelectedFile().getAbsolutePath());
+                            btj.setUploadedImage(new File("..\\rubbish_images\\" + jtb.getGeneratedId() + "-" + uploadedImage.getName()));
+                            JPEGHandler.runHandler(btj);
+                            
                             JOptionPane.showMessageDialog(null, "El archivo ha sido convertido con éxito! \nPuedes ir a checarla");
                         }
-                    } catch (IOException ex) {
+                    } catch (Exception ex) {
                         Logger.getLogger(EditorView.class.getName()).log(Level.SEVERE, null, ex);
                     }
                 }
@@ -473,76 +512,6 @@ public class EditorView extends javax.swing.JFrame {
                 new EditorView().setVisible(true);
             }
         });
-    }
-
-    private BufferedImage copyImage(BufferedImage image) {
-        BufferedImage copy = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_RGB);
-        for (int x = 0; x < image.getWidth(); x++) {
-            for (int y = 0; y < image.getHeight(); y++) {
-                copy.setRGB(x, y, image.getRGB(x, y));
-            }
-        }
-        return copy;
-    }
-
-    private BufferedImage applyRedTonesFilter(BufferedImage image) {
-        BufferedImage copy = copyImage(image);
-        for (int x = 0; x < copy.getWidth(); x++) {
-            for (int y = 0; y < copy.getHeight(); y++) {
-                Color color = new Color(copy.getRGB(x, y));
-                int red = color.getRed();
-                Color newColor = new Color(red, 0, 0);
-                copy.setRGB(x, y, newColor.getRGB());
-            }
-        }
-        return copy;
-    }
-
-    private BufferedImage applyBlueTonesFilter(BufferedImage image) {
-        BufferedImage copy = copyImage(image);
-        for (int x = 0; x < copy.getWidth(); x++) {
-            for (int y = 0; y < copy.getHeight(); y++) {
-                Color color = new Color(copy.getRGB(x, y));
-                int blue = color.getBlue();
-                Color newColor = new Color(0, 0, blue);
-                copy.setRGB(x, y, newColor.getRGB());
-            }
-        }
-        return copy;
-    }
-
-    private BufferedImage applyGreenTonesFilter(BufferedImage image) {
-        BufferedImage copy = copyImage(image);
-        for (int x = 0; x < copy.getWidth(); x++) {
-            for (int y = 0; y < copy.getHeight(); y++) {
-                Color color = new Color(copy.getRGB(x, y));
-                int green = color.getGreen();
-                Color newColor = new Color(0, green, 0);
-                copy.setRGB(x, y, newColor.getRGB());
-            }
-        }
-        return copy;
-    }
-
-    private BufferedImage applySepiaFilter(BufferedImage image) {
-        BufferedImage copy = copyImage(image);
-        for (int x = 0; x < copy.getWidth(); x++) {
-            for (int y = 0; y < copy.getHeight(); y++) {
-                Color color = new Color(copy.getRGB(x, y));
-                int r = color.getRed();
-                int g = color.getGreen();
-                int b = color.getBlue();
-                int tr = (int) (0.393 * r + 0.769 * g + 0.189 * b);
-                int tg = (int) (0.349 * r + 0.686 * g + 0.168 * b);
-                int tb = (int) (0.272 * r + 0.534 * g + 0.131 * b);
-                tr = Math.min(tr, 255);
-                tg = Math.min(tg, 255);
-                tb = Math.min(tb, 255);
-                Color newColor = new Color(tr, tg, tb);
-                copy.setRGB(x, y, newColor.getRGB());
-            }
-        }
-        return copy;
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
